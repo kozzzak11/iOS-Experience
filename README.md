@@ -45,7 +45,7 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`.
 ./gradlew connectedDebugAndroidTest
 ```
 
-`.github/workflows/android.yml` сначала компилирует приложение, запускает unit tests и lint, затем отдельным job запускает Android 16 emulator test. APK и отчёты сохраняются в Actions Artifacts. Workflow должен быть загружен в репозиторий, чтобы действительно запускаться.
+`.github/workflows/android.yml` сначала компилирует приложение, запускает unit tests и lint, затем отдельным job запускает Android 16 emulator test. APK и отчёты сохраняются в Actions Artifacts. После успешного build и Android 16 emulator job отдельный job публикует APK в GitHub Releases (v0.1.0). Последняя проверенная сборка доступна в разделе Releases репозитория.
 
 Debug APK предназначен для личной разработки. Локальная сборка и GitHub Actions могут подписываться разными development-сертификатами. Для обновлений поверх установленной версии нужен постоянный ключ. Release signing пока не настроен; приватные ключи в репозиторий не добавляются.
 

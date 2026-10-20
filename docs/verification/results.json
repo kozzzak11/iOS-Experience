@@ -1,0 +1,72 @@
+{
+  "checked_at_utc": "2026-10-20T15:25:46.376879+00:00",
+  "gradle": "8.13",
+  "agp": "8.13.0",
+  "kotlin": "2.2.10",
+  "compile_sdk": 36,
+  "target_sdk": 36,
+  "unit_test_runtime": "Robolectric 4.16 / Android SDK 35 / JDK 17",
+  "unit_tests": [
+    {
+      "suite": "com.kozzzak.ios.keyboard.EmojiCatalogTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "cases": [
+        "fullCatalogAndSearch",
+        "skinToneVariantsKeepTheOriginalSequence"
+      ]
+    },
+    {
+      "suite": "com.kozzzak.ios.keyboard.ImeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "cases": [
+        "englishAndRussianComposeAndCommit",
+        "passwordDoesNotReadOrComposeOrPersistEditorText",
+        "composingClearsWhenCursorMovesAway",
+        "fieldSwitchDoesNotCarryComposingWord",
+        "enterDispatchesEditorActionAndMultilineCommitsNewline",
+        "backspaceDuringCompositionAndSelectionReplacement",
+        "passwordVariantsAndEmailHaveCorrectPolicy",
+        "deletesWholeEmojiGrapheme"
+      ]
+    },
+    {
+      "suite": "com.kozzzak.ios.keyboard.KeyboardRenderingTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "cases": [
+        "lightAndDarkKeyboardRenderAtPhoneWidth"
+      ]
+    },
+    {
+      "suite": "com.kozzzak.ios.keyboard.WordEngineTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "cases": [
+        "explicitPersonalWordsTakePartWithoutLearningText",
+        "transpositionAndReplacement",
+        "candidateCaseAndLimits",
+        "ambiguousAndKnownWordsAreNotCorrected"
+      ]
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 11
+  },
+  "debug_apk": {
+    "sha256": "ff22c3f8df23e6648cd46daf449f8a8823c2fd71f13bd9a9579a3c4f0060de0f",
+    "bytes": 25788759,
+    "signature": "APK Signature Scheme v2 verified by apksigner"
+  },
+  "instrumentation_test_apk": "compiled, not executed",
+  "physical_device": "not tested",
+  "android_16_emulator": "not run",
+  "third_party_apps": "not tested",
+  "github_actions": "workflow prepared; repository kozzzak11/iOS-Experience created; see Actions for remote verification"
+}

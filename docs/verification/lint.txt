@@ -1,0 +1,125 @@
+app/build.gradle.kts:31: Warning: A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0 [GradleDependency]
+    androidTestImplementation("androidx.test:runner:1.6.2")
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+app/build.gradle.kts:30: Warning: A newer version of org.robolectric:robolectric than 4.16 is available: 4.17 [NewerVersionAvailable]
+    testImplementation("org.robolectric:robolectric:4.16")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+app/src/main/AndroidManifest.xml:2: Warning: The attribute android:dataExtractionRules only applies for Android 12 and higher; since minSdkVersion is API 28 you should also set android:fullBackupContent [DataExtractionRules]
+    <application android:allowBackup="false" android:dataExtractionRules="@xml/data_extraction_rules" android:label="@string/app_name" android:icon="@drawable/ic_app"
+                                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DataExtractionRules":
+   Before Android 12, the attributes android:allowBackup and
+   android:fullBackupContent were used to configure all forms of backup,
+   including cloud backups, device-to-device transfers and adb backup.
+
+   In Android 12 and higher, these attributes have been deprecated and will
+   only apply to cloud backups. You should instead use the attribute
+   android:dataExtractionRules, specifying an @xml resource that configures
+   which files to back up, for cloud backups and for device-to-device
+   transfers, separately. If your minSdkVersion supports older versions,
+   you'll still want to specify an android:fullBackupContent resource if the
+   default behavior is not right for your app.
+
+   https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   https://goo.gle/DataExtractionRules
+
+app/src/main/java/com/kozzzak/ios/keyboard/IosInputMethodService.kt:290: Warning: Use the KTX extension function Int.toDrawable instead? [UseKtx]
+        val popup=PopupWindow(layout,-2,(54*d).toInt(),true).apply {setBackgroundDrawable(android.graphics.drawable.ColorDrawable(bg));isOutsideTouchable=true;elevation=8*d}
+                                                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:9: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(v) { prefs.edit().putString("language", v).apply() }
+                 ~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:12: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(v) { prefs.edit().putString("theme", v).apply() }
+                 ~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:15: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(v) { prefs.edit().putInt("height", v.coerceIn(44, 68)).apply() }
+                 ~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:17: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+    fun set(key: String, value: Boolean) { prefs.edit().putBoolean(key, value).apply() }
+                                           ~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:20: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit().putStringSet("words_$language", words.filter { it.length in 1..48 && it.all(Char::isLetter) }.take(2000).toSet()).apply()
+        ~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:23: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+    fun rememberEmoji(emoji: String) { prefs.edit().putString("recent_emoji", (listOf(emoji) + recentEmoji()).distinct().take(40).joinToString("|")).apply() }
+                                       ~~~~~~~~~~~~
+app/src/main/java/com/kozzzak/ios/keyboard/KeyboardPrefs.kt:24: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+    fun reset() { prefs.edit().clear().apply() }
+                  ~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling
+
+   ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+0 errors, 11 warnings

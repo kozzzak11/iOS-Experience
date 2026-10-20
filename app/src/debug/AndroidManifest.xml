@@ -1,0 +1,3 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application><activity android:name=".InputProbeActivity" android:exported="true" android:label="IME test editor" /></application>
+</manifest>
