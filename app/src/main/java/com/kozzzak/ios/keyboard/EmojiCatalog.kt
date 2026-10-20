@@ -18,7 +18,7 @@ class EmojiCatalog(context: Context) {
         else -> all.filter { it.group==group && !it.name.contains("skin tone") }
     }
     private fun withoutTone(value: String): String {
-        val points=value.codePoints().filter { it !in 0x1F3FB..0x1F3FF }.toArray()
+        val points=value.codePoints().filter { it !in 0x1F3FB..0x1F3FF && it != 0xFE0F }.toArray()
         return String(points,0,points.size)
     }
     private val toneGroups=all.filter { it.name.contains("skin tone") }.groupBy { withoutTone(it.text) }

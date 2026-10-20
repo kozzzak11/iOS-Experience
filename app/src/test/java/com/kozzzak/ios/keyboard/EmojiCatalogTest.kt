@@ -24,6 +24,8 @@ class EmojiCatalogTest {
         val redHair=catalog.all.first {it.text=="🧑‍🦰"}
         assertTrue(catalog.tones(redHair).isNotEmpty())
         assertTrue(catalog.tones(redHair).joinToString { it.name + "=" + it.text.codePoints().toArray().joinToString() },catalog.tones(redHair).all {it.text.endsWith("‍🦰")})
+        assertEquals(5,catalog.tones(catalog.all.first {it.name=="victory hand"}).size)
+        assertEquals(5,catalog.tones(catalog.all.first {it.name=="index pointing up"}).size)
         assertTrue(catalog.tones(catalog.all.first {it.text=="😀"}).isEmpty())
     }
 }
