@@ -96,7 +96,7 @@ open class IosInputMethodService : InputMethodService() {
     private fun buildSurface(): View {
         theme(); letterKeys.clear(); emojiResults=null; searchLabel=null
         val surface=KeyboardSurface(this,{ prefs.enabled("swipe_hide",false) && !emojiMode },{ hideKeyboard() })
-        surface.setBackgroundColor(bg); surface.setPadding((2*d).toInt(),(4*d).toInt(),(2*d).toInt(),(6*d).toInt())
+        surface.setBackgroundColor(bg)
         root=surface
         suggestions=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL; gravity=Gravity.CENTER_VERTICAL }
         if(emojiMode && !emojiSearch) {

@@ -2,8 +2,10 @@ package com.kozzzak.ios.keyboard
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Insets
 import android.text.InputType
 import android.view.View
+import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import org.junit.Assert.*
 import org.junit.Test
@@ -18,6 +20,20 @@ import java.io.File
 @Config(sdk=[35],qualifiers="w393dp-h852dp-xxhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class KeyboardRenderingTest {
+    @Test fun navigationInsetsReserveSpaceWithoutAccumulatingOrUsingImeHeight() {
+        val controller=Robolectric.buildService(IosInputMethodService::class.java).create()
+        val surface=controller.get().onCreateInputView()
+        val base=surface.paddingBottom
+        listOf(126,126,24,0).forEach { navigationHeight ->
+            val insets=WindowInsets.Builder()
+                .setInsets(WindowInsets.Type.navigationBars(),Insets.of(0,0,0,navigationHeight))
+                .setInsets(WindowInsets.Type.ime(),Insets.of(0,0,0,900))
+                .build()
+            surface.dispatchApplyWindowInsets(insets)
+            assertEquals(base+navigationHeight,surface.paddingBottom)
+        }
+        controller.destroy()
+    }
     @Test fun lightAndDarkKeyboardRenderAtPhoneWidth() {
         listOf("light","dark").forEach { theme ->
             val controller=Robolectric.buildService(IosInputMethodService::class.java).create()
