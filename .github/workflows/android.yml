@@ -60,7 +60,13 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: ./gradlew --no-daemon connectedDebugAndroidTest
+          script: |
+            status=0
+            ./gradlew --no-daemon connectedDebugAndroidTest || status=$?
+            mkdir -p app/build/device-diagnostics
+            adb pull /sdcard/Android/data/com.kozzzak.ios/files/ime-diagnostics app/build/device-diagnostics || true
+            adb logcat -d -v threadtime > app/build/device-diagnostics/logcat.txt
+            exit "$status"
       - name: Upload device results
         if: always()
         uses: actions/upload-artifact@v4
@@ -69,6 +75,7 @@ jobs:
           path: |
             app/build/reports/androidTests/
             app/build/outputs/androidTest-results/
+            app/build/device-diagnostics/
 
   release:
     needs: [build, emulator]

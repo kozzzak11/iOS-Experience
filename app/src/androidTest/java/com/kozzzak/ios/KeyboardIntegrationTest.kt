@@ -1,17 +1,22 @@
 package com.kozzzak.ios
 
 import android.content.Intent
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.kozzzak.ios.keyboard.KeyboardPrefs
+import java.io.ByteArrayOutputStream
+import java.io.File
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Requires an emulator/device; unlike the JVM tests this exercises the system-bound IME window. */
+/** System-bound IME test: real editor, real IME window and UI-injected key presses. */
 @RunWith(AndroidJUnit4::class)
 class KeyboardIntegrationTest {
     @Test fun typeSwitchLanguageAndHide() {
@@ -23,23 +28,46 @@ class KeyboardIntegrationTest {
         val showWithHardware=device.executeShellCommand("settings get secure show_ime_with_hard_keyboard").trim()
         val ime="com.kozzzak.ios/.keyboard.IosInputMethodService"
         try {
-            // The emulator exposes a hardware keyboard; opt in to soft IME display for this test.
+            device.wakeUp()
+            device.executeShellCommand("wm dismiss-keyguard")
             device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
-            device.executeShellCommand("ime enable $ime");device.executeShellCommand("ime set $ime")
-            context.startActivity(Intent(context,InputProbeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-            assertTrue(device.wait(Until.hasObject(By.res(context.packageName,"probe_text")),10000))
-            device.findObject(By.res(context.packageName,"probe_text")).click()
-            assertTrue("English IME did not become visible",device.wait(Until.hasObject(By.desc("h")),10000))
+            device.executeShellCommand("ime enable $ime")
+            device.executeShellCommand("ime set $ime")
+            val activity=inst.startActivitySync(Intent(context,InputProbeActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+            inst.waitForIdleSync()
+            var editor:EditText?=null
+            inst.runOnMainSync {
+                val field=checkNotNull(activity.findViewById<EditText>(R.id.probe_text)) {"Test editor was not created"}
+                editor=field
+                field.requestFocus()
+                (activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .showSoftInput(field,InputMethodManager.SHOW_IMPLICIT)
+            }
+            assertTrue("English IME did not become visible",device.wait(Until.hasObject(By.desc("h")),15000))
             "hello".forEach {device.findObject(By.desc(it.toString())).click()}
             device.findObject(By.desc("Пробел; удерживайте для курсора")).click()
-            assertEquals("hello ",device.findObject(By.res(context.packageName,"probe_text")).text)
+            inst.waitForIdleSync()
+            var actual=""
+            inst.runOnMainSync {actual=editor!!.text.toString()}
+            assertEquals("hello ",actual)
             device.findObject(By.desc("Сменить язык; удерживайте для выбора клавиатуры")).click()
-            assertTrue(device.wait(Until.hasObject(By.desc("п")),5000))
+            assertTrue("Russian IME did not become visible",device.wait(Until.hasObject(By.desc("п")),5000))
             "привет".forEach {device.findObject(By.desc(it.toString())).click()}
             device.findObject(By.desc("Пробел; удерживайте для курсора")).click()
-            assertEquals("hello привет ",device.findObject(By.res(context.packageName,"probe_text")).text)
+            inst.waitForIdleSync()
+            inst.runOnMainSync {actual=editor!!.text.toString()}
+            assertEquals("hello привет ",actual)
             device.findObject(By.desc("Скрыть клавиатуру")).click()
-            assertTrue(device.wait(Until.gone(By.desc("Пробел; удерживайте для курсора")),5000))
+            assertTrue("Hide button left the keyboard visible",device.wait(Until.gone(By.desc("Пробел; удерживайте для курсора")),5000))
+        } catch(failure:Throwable) {
+            val directory=File(context.getExternalFilesDir(null),"ime-diagnostics").apply {mkdirs()}
+            runCatching {device.takeScreenshot(File(directory,"failure.png"))}
+            val hierarchy=runCatching {
+                ByteArrayOutputStream().use {out -> device.dumpWindowHierarchy(out);out.toString("UTF-8")}
+            }.getOrElse {"Hierarchy unavailable: ${it.message}"}
+            File(directory,"hierarchy.xml").writeText(hierarchy)
+            throw AssertionError("${failure.message}\n$hierarchy",failure)
         } finally {
             if(previous.contains('/')) device.executeShellCommand("ime set $previous")
             if(!previous.startsWith(context.packageName+"/")) device.executeShellCommand("ime disable $ime")

@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 class InputProbeActivity : Activity() {
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         val layout=LinearLayout(this).apply {orientation=LinearLayout.VERTICAL;setPadding(20,80,20,40)}
         listOf(Triple(R.id.probe_text,"Text",InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE),
             Triple(R.id.probe_password,"Password",InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD),
