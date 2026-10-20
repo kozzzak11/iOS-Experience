@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-10-20T15:25:46.376879+00:00",
+  "checked_at_utc": "2026-10-20T22:51:55Z",
   "gradle": "8.13",
   "agp": "8.13.0",
   "kotlin": "2.2.10",
@@ -35,11 +35,12 @@
     },
     {
       "suite": "com.kozzzak.ios.keyboard.KeyboardRenderingTest",
-      "tests": 1,
+      "tests": 2,
       "failures": 0,
       "errors": 0,
       "cases": [
-        "lightAndDarkKeyboardRenderAtPhoneWidth"
+        "lightAndDarkKeyboardRenderAtPhoneWidth",
+        "navigationInsetsReserveSpaceWithoutAccumulatingOrUsingImeHeight"
       ]
     },
     {
@@ -57,16 +58,45 @@
   ],
   "lint": {
     "errors": 0,
-    "warnings": 11
+    "warnings": 17,
+    "status": "passed"
   },
   "debug_apk": {
-    "sha256": "ff22c3f8df23e6648cd46daf449f8a8823c2fd71f13bd9a9579a3c4f0060de0f",
-    "bytes": 25788759,
-    "signature": "APK Signature Scheme v2 verified by apksigner"
+    "url": "https://github.com/kozzzak11/iOS-Experience/releases/download/v0.1.0/iOS-Experience.apk",
+    "sha256": "65c932de48f35375da19e54ac0fdeb81759df5707e2f30ab61fc7d218b458ebd",
+    "bytes": 25364751,
+    "signature": "AGP development signing; standalone apksigner verification not repeated for CI artifact"
   },
-  "instrumentation_test_apk": "compiled, not executed",
+  "instrumentation_test_apk": "compiled and executed",
   "physical_device": "not tested",
-  "android_16_emulator": "not run",
+  "android_16_emulator": {
+    "api": 36,
+    "arch": "x86_64",
+    "profile": "pixel_6",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "scenario": "real editor: hello, space, switch EN to RU, привет, space, hide keyboard"
+  },
   "third_party_apps": "not tested",
-  "github_actions": "workflow prepared; repository kozzzak11/iOS-Experience created; see Actions for remote verification"
+  "github_actions": {
+    "url": "https://github.com/kozzzak11/iOS-Experience/actions/runs/39510468341",
+    "build": "success",
+    "emulator": "success",
+    "release": "success"
+  },
+  "initial_local_verification": {
+    "checked_at_utc": "2026-10-20T15:25:46.376879+00:00",
+    "debug_apk": {
+      "sha256": "ff22c3f8df23e6648cd46daf449f8a8823c2fd71f13bd9a9579a3c4f0060de0f",
+      "bytes": 25788759,
+      "signature": "APK Signature Scheme v2 verified by apksigner"
+    },
+    "lint": {
+      "errors": 0,
+      "warnings": 11
+    }
+  },
+  "verified_commit": "f6b09cddedda19a1850a2f7864ec586335093425"
 }

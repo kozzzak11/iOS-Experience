@@ -2,6 +2,8 @@
 
 Личный проект для Nothing Phone (4a), Android 16 / Nothing OS. Kotlin, InputMethodService, Compose-настройки. Без root, сети, рекламы и аналитики.
 
+[Скачать APK 0.1.0](https://github.com/kozzzak11/iOS-Experience/releases/download/v0.1.0/iOS-Experience.apk) · [Успешная проверка Android 16](https://github.com/kozzzak11/iOS-Experience/actions/runs/39510468341)
+
 ## Первый выпуск: Keyboard 0.1.0
 
 Реализовано в коде:
