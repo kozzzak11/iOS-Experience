@@ -20,13 +20,16 @@ class KeyboardIntegrationTest {
         KeyboardPrefs(context).apply {reset();language="en";set("auto_caps",false)}
         val device=UiDevice.getInstance(inst)
         val previous=device.executeShellCommand("settings get secure default_input_method").trim()
+        val showWithHardware=device.executeShellCommand("settings get secure show_ime_with_hard_keyboard").trim()
         val ime="com.kozzzak.ios/.keyboard.IosInputMethodService"
         try {
+            // The emulator exposes a hardware keyboard; opt in to soft IME display for this test.
+            device.executeShellCommand("settings put secure show_ime_with_hard_keyboard 1")
             device.executeShellCommand("ime enable $ime");device.executeShellCommand("ime set $ime")
             context.startActivity(Intent(context,InputProbeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
             assertTrue(device.wait(Until.hasObject(By.res(context.packageName,"probe_text")),10000))
             device.findObject(By.res(context.packageName,"probe_text")).click()
-            assertTrue(device.wait(Until.hasObject(By.desc("h")),10000))
+            assertTrue("English IME did not become visible",device.wait(Until.hasObject(By.desc("h")),10000))
             "hello".forEach {device.findObject(By.desc(it.toString())).click()}
             device.findObject(By.desc("Пробел; удерживайте для курсора")).click()
             assertEquals("hello ",device.findObject(By.res(context.packageName,"probe_text")).text)
@@ -39,7 +42,9 @@ class KeyboardIntegrationTest {
             assertTrue(device.wait(Until.gone(By.desc("Пробел; удерживайте для курсора")),5000))
         } finally {
             if(previous.contains('/')) device.executeShellCommand("ime set $previous")
-            device.executeShellCommand("ime disable $ime")
+            if(!previous.startsWith(context.packageName+"/")) device.executeShellCommand("ime disable $ime")
+            if(showWithHardware=="null") device.executeShellCommand("settings delete secure show_ime_with_hard_keyboard")
+            else if(showWithHardware in listOf("0","1")) device.executeShellCommand("settings put secure show_ime_with_hard_keyboard $showWithHardware")
         }
     }
 }
